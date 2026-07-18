@@ -16,7 +16,7 @@ int main() {
     c.agregarNodo(2, 10, 20);
     c.agregarNodo(4, 15, 30);
 
-    // Verificamos la actualizacion en O(1) del beneficio y peso total
+    // Verificamos la actualizacion del beneficio y peso total
     assert(c.obtenerPesoTotal() == 25);
     assert(c.obtenerBeneficioTotal() == 50);
 
