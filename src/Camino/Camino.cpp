@@ -1,7 +1,7 @@
 #include "Camino.h"
 #include <stdexcept>
 
-// Constructor
+// Constructor del camino
 Camino::Camino(int totalNodos, int capacidad) {
     // Los acumuladores de estado inician en 0 dado que es un camino vacio
     pesoTotal = 0;
@@ -10,78 +10,78 @@ Camino::Camino(int totalNodos, int capacidad) {
     // Guardamos la restriccion rigida (W) del problema
     capacidadMaxima = capacidad;
     
-    // Dimensionamos el vector de booleanos al total de nodos del grafo con valor 'false' para que no ocurran redinemsionamientos
+    // Dimensionamos el vector de booleanos al total de nodos del grafo con valor false para que no ocurran redinemsionamientos
     // Garantiza que la busqueda en 'fueVisitado' sea de acceso directo por un puntero
     nodosVisitados.assign(totalNodos, false);
 }
 
-// Mutación: agregarNodo
+// Metodo agregarNodo
 void Camino::agregarNodo(int nodo, int pesoArista, int beneficioArista) {
-    // 1. Insercion al final de la secuencia
-    // std::vector::push_back opera en O(1) amortizado, lo que mantiene el rendimiento
-    // optimo al construir la ruta nodo por nodo
+    // Insercion al final de la secuencia
+    // std::vector::push_back sirve para insertar un elemento al final del vector
+    // con el fin de agregar un nodo a nuestra solucion
     secuencia.push_back(nodo);
     
-    // 2. Registro de NOLOOP
     // Marcamos directamente la posicion del ID del nodo como verdadera
+    // Esto nos servira para verificar que no se repitan nodos dentro del camino
     nodosVisitados[nodo] = true;
     
-    // 3. Tracking de estado (aditivo)
-    // Evitamos el recalculo total de la ruta limitandonos a sumar el diferencial
-    // Esto nos permite evaluar la validez (peso) y calidad (beneficio) al instante
+    // Vemos el estado final y lo actualizamos para ver validez y calidad del camino
+    // Sumamos el peso y el beneficio de la arista que acabamos de agregar
     pesoTotal += pesoArista;
     beneficioTotal += beneficioArista;
 }
 
-// Mutación: eliminarUltimoNodo
+// Metodo eliminarUltimoNodo
 void Camino::eliminarUltimoNodo(int pesoArista, int beneficioArista) {
-    // Verificacion de integridad: el backtracking no puede hacerse en un camino vacio
+    // El backtracking no puede hacerse en un camino vacio
     if (secuencia.empty()) {
-        throw std::underflow_error("Intento de eliminar un nodo de un camino vacio.");
+        throw std::underflow_error("Intento de eliminar un nodo de un camino vacio");
     }
     
-    // 1. Identificamos el nodo que sera eliminado mediante un acceso al ultimo elemento
+    // Identificamos el nodo que sera eliminado mediante un acceso al ultimo elemento
     int ultimoNodo = secuencia.back();
     
-    // 2. Extraccion del nodo.
+    // Extraccion del nodo
     // std::vector::pop_back destruye el elemento al final y reduce el tamaño logico
     secuencia.pop_back();
     
-    // 3. Reversion de NOLOOP.
-    // El nodo vuelve a estar disponible (no visitado). Al igual que en la insercion, 
-    // es una escritura directa a memoria
+    // Revertimos el estado para que el nodo vuelva a estar disponible o no visitado
     nodosVisitados[ultimoNodo] = false;
     
-    // 4. Tracking de estado (sustractivo)
-    // Revertimos matematicamente el impacto de las aristas deshechas
-    // Esto deja el estado exacto previo a la llamada a 'agregarNodo'
+    // Revertimos el impacto de las aristas deshechas
+    // Esto deja el estado exacto anterior a la llamada a agregarNodo
     pesoTotal -= pesoArista;
     beneficioTotal -= beneficioArista;
 }
 
-// Consulta: fueVisitado
+// Metodo fueVisitado
 bool Camino::fueVisitado(int nodo) const {
-    // COMO: Indice directo sobre un vector preasignado
-    // POR QUÉ: Si usáramos std::find iterando sobre 'secuencia', la complejidad
-    // sería lineal O(V). Para metaheurísticas y Branch and Bound esto formaría un 
-    // cuello de botella. Con el acceso directo por índice, obtenemos O(1) absoluto
+    // Acceso directo a la posicion del id del nodo, obtenemos el valor booleano
     return nodosVisitados[nodo];
 }
 
+// Metodo obtenerPesoTotal
 int Camino::obtenerPesoTotal() const {
+    // Obtenemos el peso acumulado del camino
     return pesoTotal;
 }
 
+// Metodo obtenerBeneficioTotal
 int Camino::obtenerBeneficioTotal() const {
+    // Obtenemos el beneficio acumulado del camino
     return beneficioTotal;
 }
 
+// Metodo obtenerSecuencia
 const std::vector<int>& Camino::obtenerSecuencia() const {
     // Retornar un 'const &' permite lectura externa como lo es imprimir la ruta 
     // sin el costo de copia y sin romper el encapsulamiento de la clase
     return secuencia;
 }
 
+// Metodo obtenerCapacidadMaxima
 int Camino::obtenerCapacidadMaxima() const {
+    // Obtenemos la capacidad maxima del camino
     return capacidadMaxima;
 }
