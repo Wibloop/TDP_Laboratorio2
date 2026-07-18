@@ -6,7 +6,7 @@ int main() {
     // Instanciamos un Grafo con 5 nodos 4 aristas y capacidad 100
     Grafo g(5, 4, 100);
 
-    // Verificamos la asignacion de numNodos y capacidadW
+    // Verificamos la asignacion de numNodos y capacidad W
     assert(g.getNumNodos() == 5);
     assert(g.getCapacidadW() == 100);
 
